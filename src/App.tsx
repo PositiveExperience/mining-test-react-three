@@ -1,35 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect } from 'react';
+import { observer } from 'mobx-react-lite';
+import { useStores } from './hooks/useStores';
+import { MineScene } from './components/Scene';
+import { HorizonSelector, NodeInfoPanel, Loader, ErrorMessage } from './components/UI';
+import './App.css';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = observer(() => {
+  const { nodeStore } = useStores();
+
+  useEffect(() => {
+    const xmlPath = './src/assets/data/MIM_Scheme.xml';
+    nodeStore.loadNodes(xmlPath, 1000);
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="app-container">
+      <header className="app-header">
+        <h1>3D Визуализация шахты</h1>
+        <HorizonSelector />
+      </header>
 
-export default App
+      <main className="scene-container">
+        {nodeStore.isLoading ? (
+          <Loader message="Загрузка данных шахты..." />
+        ) : nodeStore.error ? (
+          <ErrorMessage text={nodeStore.error} />
+        ) : (
+          <>
+            <MineScene />
+            <NodeInfoPanel />
+          </>
+        )}
+      </main>
+    </div>
+  );
+});
+
+export default App;
