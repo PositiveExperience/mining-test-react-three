@@ -10,8 +10,8 @@ const App = observer(() => {
 
   useEffect(() => {
     const xmlPath = './src/assets/data/MIM_Scheme.xml';
-    nodeStore.loadNodes(xmlPath, 1000);
-  }, []);
+    nodeStore.loadNodes(xmlPath);
+  }, [nodeStore]);
 
   return (
     <div className="app-container">
