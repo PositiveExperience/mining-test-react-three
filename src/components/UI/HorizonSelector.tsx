@@ -20,7 +20,7 @@ const HorizonSelector = observer(() => {
         <option value="all">Все горизонты</option>
         {horizonStore.horizons.map(horizon => (
           <option key={horizon.zLevel} value={horizon.zLevel}>
-            Горизонт {horizon.zLevel}m ({horizon.nodes.length} узлов)
+            {horizon.name} ({horizon.zLevel}м)
           </option>
         ))}
       </select>

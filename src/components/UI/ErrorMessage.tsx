@@ -12,7 +12,7 @@ const ErrorMessage = observer(({ text }: { text: string }) => {
       <p className="error-text">{text}</p>
       <button 
         className="retry-button"
-        onClick={() => nodeStore.loadNodes('./src/assets/data/MIM_Scheme.xml')}
+        onClick={() => nodeStore.loadMineData('./src/assets/data/MIM_Scheme.xml')}
       >
         Повторить попытку
       </button>

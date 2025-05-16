@@ -1,0 +1,37 @@
+.workings-list {
+  position: absolute;
+  top: 80px;
+  right: 20px;
+  background: rgba(34, 40, 49, 0.9);
+  padding: 15px;
+  border-radius: 8px;
+  color: white;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.workings-list h3 {
+  margin: 0 0 10px 0;
+  font-size: 1rem;
+}
+
+.workings-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.working-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.working-item input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.working-item span {
+  font-size: 0.9rem;
+} 

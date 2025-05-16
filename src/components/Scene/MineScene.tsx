@@ -5,31 +5,31 @@ import { useStores } from '../../hooks/useStores';
 import { NodeElement, SectionConnection } from '../Elements';
 import { OrbitControls, Bounds } from '@react-three/drei';
 
-type Section = {
-  id: string;
-  startNodeId: string;
-  endNodeId: string;
-  isHighlighted: boolean;
-};
-
 const MineScene = observer(() => {
   const { nodeStore, horizonStore, uiStore } = useStores();
 
-  const nodesToShow = horizonStore.activeHorizonZ
-    ? horizonStore.activeHorizonNodes
+  const activeHorizon = horizonStore.activeHorizonZ !== null
+    ? nodeStore.horizons.find(h => h.zLevel === horizonStore.activeHorizonZ)
+    : null;
+
+  const visibleNodes = activeHorizon
+    ? activeHorizon.nodes
     : nodeStore.nodes;
 
-  const horizonSections: Section[] = [];
-  for (let i = 0; i < nodesToShow.length - 1; i++) {
-    const start = nodesToShow[i];
-    const end = nodesToShow[i + 1];
-    horizonSections.push({
-      id: `${start.id}-${end.id}`,
-      startNodeId: start.id,
-      endNodeId: end.id,
-      isHighlighted: false
-    });
-  }
+  const visibleSections = React.useMemo(() => {
+    if (activeHorizon) {
+      return nodeStore.sections.filter(section => {
+        const startNode = nodeStore.getNodeById(section.startNodeId);
+        const endNode = nodeStore.getNodeById(section.endNodeId);
+        const tolerance = 1.0;
+        return startNode && endNode && 
+               Math.abs(startNode.z - horizonStore.activeHorizonZ!) <= tolerance &&
+               Math.abs(endNode.z - horizonStore.activeHorizonZ!) <= tolerance;
+      });
+    }
+    return nodeStore.sections;
+  }, [activeHorizon, nodeStore.sections, horizonStore.activeHorizonZ]);
+
 
   return (
     <Canvas
@@ -39,26 +39,27 @@ const MineScene = observer(() => {
       <ambientLight intensity={0.8} />
       <directionalLight position={[10, 10, 10]} intensity={0.5} />
       <Bounds fit clip observe visible={false}>
-        {nodesToShow.map(node => (
+        {visibleNodes.map(node => (
           <NodeElement 
             key={node.id} 
             node={node} 
             isSelected={uiStore.selectedNodeId === node.id}
           />
         ))}
-        {horizonSections.map(section => {
+        {visibleSections.map(section => {
           const startNode = nodeStore.getNodeById(section.startNodeId);
           const endNode = nodeStore.getNodeById(section.endNodeId);
-          if (!startNode || !endNode) return null;
+          
+          if (!startNode || !endNode) {
+            return null;
+          }
+
           return (
             <SectionConnection 
               key={section.id} 
               start={startNode}
               end={endNode}
-              color={section.isHighlighted 
-                ? uiStore.displaySettings.highlightColor 
-                : uiStore.displaySettings.sectionColor
-              }
+              color={uiStore.displaySettings.sectionColor}
             />
           );
         })}

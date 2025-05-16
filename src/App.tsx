@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useStores } from './hooks/useStores';
 import { MineScene } from './components/Scene';
-import { HorizonSelector, NodeInfoPanel, Loader, ErrorMessage } from './components/UI';
+import { HorizonSelector, NodeInfoPanel, Loader, ErrorMessage, WorkingsList } from './components/UI';
 import './App.css';
 
 const App = observer(() => {
@@ -10,7 +10,7 @@ const App = observer(() => {
 
   useEffect(() => {
     const xmlPath = './src/assets/data/MIM_Scheme.xml';
-    nodeStore.loadNodes(xmlPath);
+    nodeStore.loadMineData(xmlPath);
   }, [nodeStore]);
 
   return (
@@ -29,6 +29,7 @@ const App = observer(() => {
           <>
             <MineScene />
             <NodeInfoPanel />
+            <WorkingsList />
           </>
         )}
       </main>
